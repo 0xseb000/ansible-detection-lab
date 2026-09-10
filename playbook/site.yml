@@ -1,0 +1,15 @@
+---
+- name: Install and configure observability
+  hosts: observability
+  become: true
+  roles:
+    - prometheus
+    - loki
+    - grafana
+    - alloy
+
+- name: Harden target and install alloy
+  become: true
+  roles:
+    - hardening
+    - alloy
