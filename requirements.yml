@@ -1,0 +1,7 @@
+---
+roles:
+  - name: hardening # set name, otherwise it would use the repo name
+    src: https://github.com/0xseb000/ansible-linux-hardening
+
+collections:
+  - name: prometheus.prometheus

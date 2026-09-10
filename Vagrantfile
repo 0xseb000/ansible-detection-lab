@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
     # Run the ansible playbook on the created vagrant vm (run with --no-provision until ansible is configured)
     config.vm.provision do |ansible|
         ansible.playbook = "playbook/site.yml"
+        ansible.galaxy_role_file="requirements.yml"
     end
 
 end
