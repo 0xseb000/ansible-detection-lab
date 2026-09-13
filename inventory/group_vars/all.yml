@@ -1,0 +1,9 @@
+---
+observability_ip: 10.168.155.20
+
+# Fix Datasoucre UID, can't change after run, otherwise the dashboard will break
+ds_uid_prometheus: prometheus
+ds_uid_loki: loki
+
+
+grafana_admin_password: "pass123"
