@@ -1,15 +1,16 @@
 ---
-- name: Install and configure observability
+- name: Install and configure the observability stack
   hosts: observability
   become: true
   roles:
-    - prometheus
-    - loki
-    - grafana
-    - alloy
+    - w_prometheus
+    - w_loki
+    - w_grafana
+    # - w_alloy   # later on: Log-Shipping
 
-- name: Harden target and install alloy
-  become: true
-  roles:
-    - hardening
-    - alloy
+# - name: Harden the target host
+#   hosts: target
+#   become: true
+#   roles:
+#     - hardening
+    # - w_alloy   # later on: Log-Shipping
