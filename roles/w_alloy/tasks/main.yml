@@ -1,0 +1,7 @@
+---
+- name: Install and configure Grafana Alloy (upstream collection role)
+  ansible.builtin.include_role:
+    name: grafana.grafana.alloy
+  vars:
+    alloy_version: "{{ w_alloy_version }}"
+    alloy_config: "{{ w_alloy_config }}"

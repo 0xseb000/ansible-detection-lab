@@ -1,0 +1,7 @@
+---
+- name: Install and configure Loki (upstream collection role)
+  ansible.builtin.include_role:
+    name: grafana.grafana.loki
+  vars:
+    loki_version: "{{ w_loki_version }}"
+    loki_http_listen_port: "{{ w_loki_http_listen_port }}"

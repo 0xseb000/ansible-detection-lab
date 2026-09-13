@@ -1,0 +1,27 @@
+---
+w_grafana_http_port: 3000
+
+grafana_ini:
+  server:
+    http_port: "{{ w_grafana_http_port }}"
+    root_url: "http://{{ observability_ip }}:{{ w_grafana_http_port }}"
+  security:
+    admin_user: admin
+    admin_password: "{{ grafana_admin_password }}"
+  users:
+    allow_sign_up: false
+
+# The UIDs are hard-coded in `inventory/group_vars/all.yml` because subsequent dashboard JSON files 
+# reference them specifically. Without a fixed UID, Grafana assigns random IDs, and all panels remain empty.
+w_grafana_datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: "{{ ds_uid_prometheus }}"
+    access: proxy
+    url: "http://localhost:9090"
+    isDefault: true
+  - name: Loki
+    type: loki
+    uid: "{{ ds_uid_loki }}"
+    access: proxy
+    url: "http://localhost:{{ w_loki_http_listen_port | default(3100) }}"
