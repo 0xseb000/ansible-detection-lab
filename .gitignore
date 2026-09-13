@@ -1,0 +1,3 @@
+.DS_Store
+.vagrant/
+inventory/group_vars/vault.yml
