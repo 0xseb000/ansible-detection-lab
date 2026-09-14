@@ -8,6 +8,7 @@ Vagrant.configure("2") do |config|
     machines.each do |name, ip|
         config.vm.define name do |node|
             node.vm.box = "bento/ubuntu-24.04"
+            node.vm.hostname = name
             node.vm.network "private_network", ip: ip
         end
     end
