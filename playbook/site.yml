@@ -1,16 +1,16 @@
 ---
 - name: Install and configure the observability stack
-  hosts: observability
+  hosts: monitoring
   become: true
   roles:
     - w_prometheus
     - w_loki
     - w_grafana
-    # - w_alloy   # later on: Log-Shipping
+    - w_alloy
 
-# - name: Harden the target host
-#   hosts: target
-#   become: true
-#   roles:
-#     - hardening
-    # - w_alloy   # later on: Log-Shipping
+- name: Ship logs from the target host
+  hosts: targets
+  become: true
+  roles:
+    # - hardening   # TODO: package the role into its own repo, then re-enable
+    - w_alloy
