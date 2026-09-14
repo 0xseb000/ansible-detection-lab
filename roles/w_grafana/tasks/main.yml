@@ -1,6 +1,7 @@
 ---
-# Grafana Collection needs python3-debian
-- name: Install python3-debian
+# Ubuntu 24.04+ makes the role use deb822_repository, which needs this package
+# on the target. The role does not install it.
+- name: Install python3-debian (required by deb822_repository)
   ansible.builtin.apt:
     name: python3-debian
     state: present
@@ -8,6 +9,7 @@
     cache_valid_time: 3600
   when: ansible_facts['os_family'] == 'Debian'
 
+# grafana_ini is set in defaults/main.yml
 - name: Install and configure Grafana (upstream collection role)
   ansible.builtin.include_role:
     name: grafana.grafana.grafana

@@ -1,5 +1,4 @@
 ---
-# Installation comes from collection
 - name: Install and configure Prometheus (upstream collection role)
   ansible.builtin.include_role:
     name: prometheus.prometheus.prometheus

@@ -1,2 +1,4 @@
 ---
+# Pinned: skips the role's GitHub API lookup and keeps the lab reproducible
 w_prometheus_version: "3.14.0"
+w_prometheus_web_listen_address: "0.0.0.0:9090"
