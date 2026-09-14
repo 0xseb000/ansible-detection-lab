@@ -1,2 +1,10 @@
 ---
-w_alloy_config: ""
+w_alloy_config_template: "config.alloy.j2"
+# Own filename on purpose: the role deletes /etc/alloy/config.alloy whenever
+# CONFIG_FILE is set, which would remove the file if we used that path.
+w_alloy_config_path: "/etc/alloy/detection-lab.alloy"
+
+w_alloy_loki_endpoint: "http://{{ observability_ip }}:{{ w_loki_http_listen_port | default(3100) }}/loki/api/v1/push"
+
+# Backfill window on first start.
+w_alloy_journal_max_age: "12h"

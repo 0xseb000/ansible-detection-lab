@@ -1,7 +1,40 @@
 ---
-- name: Install and configure Grafana Alloy (upstream collection role)
+# Config must exist before the role starts Alloy. The role polls /-/ready
+# and Alloy refuses to start without its config file.
+- name: Ensure Alloy config directory exists
+  ansible.builtin.file:
+    path: "{{ w_alloy_config_path | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy Alloy pipeline config
+  ansible.builtin.template:
+    src: "{{ w_alloy_config_template }}"
+    dest: "{{ w_alloy_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart alloy
+
+- name: Install Grafana Alloy (upstream collection role)
   ansible.builtin.include_role:
     name: grafana.grafana.alloy
   vars:
     alloy_version: "{{ w_alloy_version }}"
-    alloy_config: "{{ w_alloy_config }}"
+    alloy_env_file_vars:
+      CONFIG_FILE: "{{ w_alloy_config_path }}"
+
+# Must run after the role, which creates the alloy user
+- name: Allow alloy to read the systemd journal
+  ansible.builtin.user:
+    name: alloy
+    groups:
+      - systemd-journal
+      - adm
+    append: true
+  notify: Restart alloy
+
+- name: Apply pending Alloy restarts
+  ansible.builtin.meta: flush_handlers

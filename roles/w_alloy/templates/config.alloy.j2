@@ -1,0 +1,45 @@
+// Managed by Ansible: roles/w_alloy/templates/config.alloy.j2
+// systemd journal -> Loki
+
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+// Promote journal metadata to Loki labels. Kept small: each label
+// multiplies the number of streams Loki has to keep.
+loki.relabel "journal" {
+  forward_to = []
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+
+  rule {
+    source_labels = ["__journal_syslog_identifier"]
+    target_label  = "syslog_identifier"
+  }
+
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+}
+
+loki.source.journal "journal" {
+  forward_to    = [loki.write.loki.receiver]
+  relabel_rules = loki.relabel.journal.rules
+  max_age       = "{{ w_alloy_journal_max_age }}"
+
+  labels = {
+    job  = "journald",
+    host = "{{ inventory_hostname }}",
+  }
+}
+
+loki.write "loki" {
+  endpoint {
+    url = "{{ w_alloy_loki_endpoint }}"
+  }
+}
