@@ -1,10 +1,12 @@
-// Managed by Ansible: roles/w_alloy/templates/config.alloy.j2
-// systemd journal -> Loki
+// Managed by Ansible - roles/w_alloy/templates/config.alloy.j2
+// systemd journal -> Loki, host metrics -> Prometheus
 
 logging {
   level  = "info"
   format = "logfmt"
 }
+
+// ---------------------------------------------------------------- logs
 
 // Promote journal metadata to Loki labels. Kept small: each label
 // multiplies the number of streams Loki has to keep.
@@ -41,5 +43,38 @@ loki.source.journal "journal" {
 loki.write "loki" {
   endpoint {
     url = "{{ w_alloy_loki_endpoint }}"
+  }
+}
+
+// ------------------------------------------------------------- metrics
+
+// node_exporter built into Alloy. No separate service needed.
+prometheus.exporter.unix "node" { }
+
+// Default instance label would be 127.0.0.1:port. Use the inventory name
+// so metrics and logs can be correlated on the same host identifier.
+discovery.relabel "node" {
+  targets = prometheus.exporter.unix.node.targets
+
+  rule {
+    target_label = "instance"
+    replacement  = "{{ inventory_hostname }}"
+  }
+
+  rule {
+    target_label = "job"
+    replacement  = "node"
+  }
+}
+
+prometheus.scrape "node" {
+  targets         = discovery.relabel.node.output
+  forward_to      = [prometheus.remote_write.prometheus.receiver]
+  scrape_interval = "{{ w_alloy_scrape_interval }}"
+}
+
+prometheus.remote_write "prometheus" {
+  endpoint {
+    url = "{{ w_alloy_prometheus_endpoint }}"
   }
 }

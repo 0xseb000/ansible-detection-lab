@@ -7,3 +7,4 @@
     prometheus_web_listen_address: "{{ w_prometheus_web_listen_address }}"
     prometheus_scrape_configs: "{{ w_prometheus_scrape_configs }}"
     prometheus_alert_rules: "{{ w_prometheus_alert_rules }}"
+    prometheus_config_flags_extra: "{{ w_prometheus_config_flags_extra }}"

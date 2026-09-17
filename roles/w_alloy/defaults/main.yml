@@ -1,10 +1,13 @@
 ---
+# We render the config ourselves; the collection role only installs Alloy.
 w_alloy_config_template: "config.alloy.j2"
 # Own filename on purpose: the role deletes /etc/alloy/config.alloy whenever
-# CONFIG_FILE is set, which would remove the file if we used that path.
+# CONFIG_FILE is set, which would remove our file if we used that path.
 w_alloy_config_path: "/etc/alloy/detection-lab.alloy"
 
 w_alloy_loki_endpoint: "http://{{ observability_ip }}:{{ w_loki_http_listen_port | default(3100) }}/loki/api/v1/push"
+w_alloy_prometheus_endpoint: "http://{{ observability_ip }}:9090/api/v1/write"
 
 # Backfill window on first start.
 w_alloy_journal_max_age: "12h"
+w_alloy_scrape_interval: "15s"

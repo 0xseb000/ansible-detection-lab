@@ -1,9 +1,17 @@
 ---
+w_prometheus_web_listen_address: "0.0.0.0:9090"
+
 w_prometheus_scrape_configs:
   - job_name: prometheus
     static_configs:
       - targets:
           - "localhost:9090"
+
+# Alloy pushes host metrics instead of Prometheus pulling them.
+# Empty value on purpose: the role renders a bare --flag for falsy values,
+# and this is a boolean flag that rejects "=true".
+w_prometheus_config_flags_extra:
+  web.enable-remote-write-receiver: ""
 
 # Own detection rules, added later.
 w_prometheus_alert_rules: []
