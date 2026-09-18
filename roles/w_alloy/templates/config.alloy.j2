@@ -46,6 +46,53 @@ loki.write "loki" {
   }
 }
 
+// -------------------------------------------------------- fail2ban logs
+
+// fail2ban logs to a file, not journald, so it needs its own source.
+local.file_match "fail2ban" {
+  path_targets = [{
+    __path__ = "/var/log/fail2ban.log",
+    job      = "fail2ban",
+    host     = "{{ inventory_hostname }}",
+  }]
+}
+
+loki.process "fail2ban" {
+  forward_to = [loki.write.loki.receiver]
+
+  stage.multiline {
+    firstline     = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+    max_wait_time = "3s"
+  }
+
+  stage.regex {
+    expression = "^(?P<timestamp>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2},\\d{3}) (?P<component>\\S+)\\s*\\[(?P<pid>\\d+)\\]: (?P<level>\\S+)\\s+(?:\\[(?P<jail>[^\\]]+)\\]\\s+)?(?P<message>.*)$"
+  }
+
+  // Without this Loki stores the ingest time, so the timeline would show
+  // when Alloy started rather than when the event happened.
+  stage.timestamp {
+    source   = "timestamp"
+    format   = "2006-01-02 15:04:05,000"
+    location = "Local"
+  }
+
+  // Low-cardinality fields only. The banned IP stays in the log line and is
+  // extracted at query time. As a label it would create one stream per IP.
+  stage.labels {
+    values = {
+      level     = "level",
+      component = "component",
+      jail      = "jail",
+    }
+  }
+}
+
+loki.source.file "fail2ban" {
+  targets    = local.file_match.fail2ban.targets
+  forward_to = [loki.process.fail2ban.receiver]
+}
+
 // ------------------------------------------------------------- metrics
 
 // node_exporter built into Alloy. No separate service needed.
@@ -78,3 +125,4 @@ prometheus.remote_write "prometheus" {
     url = "{{ w_alloy_prometheus_endpoint }}"
   }
 }
+
