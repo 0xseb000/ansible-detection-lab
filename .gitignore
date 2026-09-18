@@ -1,3 +1,6 @@
 .DS_Store
 .vagrant/
 inventory/group_vars/vault.yml
+roles/galaxy/
+playbook/roles/
+collections/

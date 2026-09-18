@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "ansible" do |ansible|
         ansible.playbook = "playbook/site.yml"
         ansible.inventory_path = "inventory/hosts.yml"
-        ansible.galaxy_role_file="requirements.yml"
+        ansible.config_file = "ansible.cfg"
     end
 
 end

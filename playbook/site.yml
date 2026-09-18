@@ -12,5 +12,5 @@
   hosts: targets
   become: true
   roles:
-    # - hardening   # TODO: package the role into its own repo, then re-enable
+    - hardening
     - w_alloy
