@@ -30,13 +30,21 @@ loki.relabel "journal" {
 }
 
 loki.source.journal "journal" {
-  forward_to    = [loki.write.loki.receiver]
+  forward_to    = [loki.process.journal.receiver]
   relabel_rules = loki.relabel.journal.rules
   max_age       = "{{ w_alloy_journal_max_age }}"
+}
 
-  labels = {
-    job  = "journald",
-    host = "{{ inventory_hostname }}",
+loki.process "journal" {
+  forward_to = [loki.write.loki.receiver]
+
+  // Set after the source, because loki.source.journal overrides
+  // its own labels argument with the component name.
+  stage.static_labels {
+    values = {
+      job  = "journald",
+      host = "{{ inventory_hostname }}",
+    }
   }
 }
 
