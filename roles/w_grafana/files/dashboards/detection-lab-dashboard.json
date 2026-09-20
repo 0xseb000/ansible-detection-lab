@@ -28,7 +28,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 8,
+      "id": 11,
       "panels": [],
       "title": "Overview",
       "type": "row"
@@ -41,8 +41,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 9,
-      "panels": [],
+      "id": 12,
       "title": "Stats",
       "type": "row"
     },
@@ -120,7 +119,7 @@
           "refId": "A"
         }
       ],
-      "title": "Banned IPs Total",
+      "title": "Current Banned IPs",
       "type": "bargauge"
     },
     {
@@ -384,7 +383,7 @@
       },
       "id": 4,
       "options": {
-        "cellHeight": "md",
+        "cellHeight": "lg",
         "showHeader": false,
         "sortBy": []
       },
@@ -413,8 +412,7 @@
         "x": 0,
         "y": 15
       },
-      "id": 10,
-      "panels": [],
+      "id": 13,
       "title": "Logs",
       "type": "row"
     },
@@ -425,7 +423,7 @@
       },
       "gridPos": {
         "h": 11,
-        "w": 10,
+        "w": 13,
         "x": 0,
         "y": 16
       },
@@ -434,6 +432,7 @@
         "dedupStrategy": "none",
         "enableInfiniteScrolling": false,
         "enableLogDetails": true,
+        "fontSize": "small",
         "prettifyLogMessage": true,
         "showControls": false,
         "showFieldSelector": false,
@@ -458,7 +457,7 @@
           "refId": "A"
         }
       ],
-      "title": "fail2ban logs",
+      "title": "fail2ban Activity",
       "type": "logs"
     },
     {
@@ -468,8 +467,8 @@
       },
       "gridPos": {
         "h": 11,
-        "w": 14,
-        "x": 10,
+        "w": 11,
+        "x": 13,
         "y": 16
       },
       "id": 5,
@@ -501,7 +500,7 @@
           "refId": "A"
         }
       ],
-      "title": "Ban Logs",
+      "title": "Banned IPs",
       "type": "logs"
     },
     {
@@ -511,7 +510,7 @@
       },
       "gridPos": {
         "h": 13,
-        "w": 24,
+        "w": 13,
         "x": 0,
         "y": 27
       },
@@ -520,11 +519,12 @@
         "dedupStrategy": "none",
         "enableInfiniteScrolling": false,
         "enableLogDetails": true,
+        "fontSize": "small",
         "prettifyLogMessage": true,
         "showControls": false,
         "showFieldSelector": false,
         "showLevel": true,
-        "showTime": false,
+        "showTime": true,
         "sortOrder": "Descending",
         "timestampResolution": "ms",
         "unwrappedColumns": false,
@@ -546,6 +546,191 @@
       ],
       "title": "sudo Activity",
       "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 11,
+        "x": 13,
+        "y": 27
+      },
+      "id": 10,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showControls": false,
+        "showFieldSelector": false,
+        "showLevel": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "timestampResolution": "ms",
+        "unwrappedColumns": false,
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "13.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{job=\"journald\", host=\"target\", syslog_identifier=\"useradd\"}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Account Creation",
+      "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 14,
+      "title": "Alerts",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(ALERTS{alertstate=\"firing\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active Alerts",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "frameIndex": 1,
+        "showHeader": true
+      },
+      "pluginVersion": "13.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "ALERTS{alertstate=~\"firing|pending\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Alert Details",
+      "type": "table"
     }
   ],
   "preload": false,
@@ -571,7 +756,7 @@
   },
   "timezone": "browser",
   "title": "Detection Lab",
-  "version": 34,
+  "version": 51,
   "uid": "adc6tlq",
-  "id": 2081467792801792
+  "id": null
 }
