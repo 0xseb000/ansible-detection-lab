@@ -1,0 +1,4 @@
+---
+# Copy to inventory/group_vars/vault.yml (gitignored), then:
+#   ansible-vault encrypt inventory/group_vars/vault.yml
+vault_grafana_admin_password: "CHANGE-ME-min-12-chars"

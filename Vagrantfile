@@ -18,6 +18,7 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "playbook/site.yml"
         ansible.inventory_path = "inventory/hosts.yml"
         ansible.config_file = "ansible.cfg"
+        ansible.ask_vault_pass = true
     end
 
 end

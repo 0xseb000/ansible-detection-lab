@@ -5,4 +5,4 @@ observability_ip: 10.168.155.20
 ds_uid_prometheus: prometheus
 ds_uid_loki: loki
 
-grafana_admin_password: pass123
+grafana_admin_password: "{{ vault_grafana_admin_password }}"
