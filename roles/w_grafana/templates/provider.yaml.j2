@@ -1,0 +1,14 @@
+# Managed by Ansible: roles/w_grafana
+# File-based dashboard provisioning. allowUiUpdates=false keeps Git as the
+# single source of truth: edits must go through the repo, not the UI.
+apiVersion: 1
+providers:
+  - name: detection-lab
+    orgId: 1
+    type: file
+    disableDeletion: false
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

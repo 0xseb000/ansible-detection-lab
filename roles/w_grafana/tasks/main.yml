@@ -16,3 +16,33 @@
   vars:
     grafana_version: "{{ w_grafana_version }}"
     grafana_datasources: "{{ w_grafana_datasources }}"
+
+# Own dashboards, provisioned from the repo so they survive a rebuild.
+- name: Ensure dashboard directory exists
+  ansible.builtin.file:
+    path: /var/lib/grafana/dashboards
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: "0755"
+
+- name: Deploy dashboard provider
+  ansible.builtin.template:
+    src: provider.yaml.j2
+    dest: /etc/grafana/provisioning/dashboards/detection-lab.yaml
+    owner: root
+    group: grafana
+    mode: "0640"
+  notify: Restart grafana
+
+- name: Deploy dashboards
+  ansible.builtin.copy:
+    src: "dashboards/"
+    dest: /var/lib/grafana/dashboards/
+    owner: grafana
+    group: grafana
+    mode: "0644"
+  notify: Restart grafana
+
+- name: Apply pending Grafana restart
+  ansible.builtin.meta: flush_handlers
