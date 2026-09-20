@@ -13,5 +13,46 @@ w_prometheus_scrape_configs:
 w_prometheus_config_flags_extra:
   web.enable-remote-write-receiver: ""
 
-# Own detection rules, added later.
-w_prometheus_alert_rules: []
+# Metric-based detection. Logs show what happened, metrics show what stopped
+# happening. An attacker who silences the log shipper leaves only a gap.
+w_prometheus_alert_rules:
+  - alert: HostMetricsMissing
+    expr: absent(up{instance="target"})
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "No metrics from target. Host or agent down"
+      description: >-
+        Alloy stopped pushing. With a push model the series disappears
+        instead of going to 0, so absent() is the only way to detect it.
+
+  - alert: ClockOutOfSync
+    expr: node_timex_sync_status == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{% raw %}Clock not synchronised on {{ $labels.instance }}{% endraw %}"
+      description: >-
+        Loki rejects entries whose timestamp is outside its acceptance
+        window, and cross-host log correlation becomes unreliable.
+
+  - alert: HighCpuUsage
+    expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{% raw %}CPU above 80% on {{ $labels.instance }}{% endraw %}"
+
+  - alert: DiskFillingUp
+    expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} < 0.15
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{% raw %}Less than 15% disk space left on {{ $labels.instance }}{% endraw %}"
+      description: >-
+        A full disk stops auditd and the journal from writing - a cheap way
+        to blind host-based detection.
