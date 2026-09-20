@@ -26,9 +26,9 @@ export TARGET=10.168.155.10
 | # | Attack | Detection query | Signal |
 |---|--------|-----------------|--------|
 | 01 | 8 failed SSH logins | `sum(count_over_time({job="journald", host="target", syslog_identifier="sshd"} \|~ \`Failed password\|invalid user\` [5m]))` | spike + fail2ban ban |
-| 01 | fail2ban reaction | `{job="fail2ban", host="target"} \|= \`Ban \`` | ban event in log |
+| 01 | fail2ban reaction | `{job="fail2ban", host="target"} \|= Ban` | ban event in log |
 | 02 | sudo abuse | `{job="journald", host="target", syslog_identifier="sudo"}` | sudo command logged |
-| 03 | user creation | `{job="journald", host="target"} \|= \`new user\`` | useradd logged |
+| 03 | user creation | `{job="journald", host="target"} \|= new user` | useradd logged |
 
 ## MITRE ATT&CK mapping
 
@@ -60,4 +60,4 @@ vagrant ssh target -- 'bash -s' < scenarios/03-user-creation.sh
 
 ## Note on the metrics alert
 
-The `HostMetricsMissing` Prometheus rule (see `roles/w_prometheus`) detects a stopped agent through the *absence* of metrics - the case logs cannot catch. It is not run as a live scenario because the `for: 2m` delay is too long for a demo; show it with a pre-captured screenshot instead.
+The `HostMetricsMissing` Prometheus rule (see `roles/w_prometheus`) detects a stopped agent through the *absence* of metrics - the case logs cannot catch.
