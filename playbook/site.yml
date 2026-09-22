@@ -1,4 +1,20 @@
 ---
+# Clocks drift apart. Loki then rejects entries whose timestamp is
+# outside its window, so metrics/logs never arrive. Sync time on every host.
+- name: Base setup for all hosts
+  hosts: all
+  become: true
+  pre_tasks:
+    - name: Set timezone
+      community.general.timezone:
+        name: Europe/Zurich
+
+    - name: Enable time synchronisation
+      ansible.builtin.systemd_service:
+        name: systemd-timesyncd
+        enabled: true
+        state: started
+
 - name: Install and configure the observability stack
   hosts: monitoring
   become: true
